@@ -15,8 +15,11 @@
  */
 package com.example.android.sunshine.app;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -32,6 +35,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
 
@@ -43,6 +47,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private ForecastAdapter mForecastAdapter;
 
     private ListView forecastListView;
+    private TextView emptyView;
     private int mPosition = ListView.INVALID_POSITION;
     private boolean mUseTodayLayout;
 
@@ -80,6 +85,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     static final int COL_WEATHER_CONDITION_ID = 6;
     static final int COL_COORD_LAT = 7;
     static final int COL_COORD_LONG = 8;
+
+    static final int EMPTY_CURSOR = 0;
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -138,7 +145,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         // Get a reference to the ListView, and attach this adapter to it.
         forecastListView = (ListView) rootView.findViewById(R.id.listview_forecast);
-        forecastListView.setEmptyView(rootView.findViewById(R.id.listview_forecast_empty));
+        emptyView = (TextView) rootView.findViewById(R.id.listview_forecast_empty);
+        forecastListView.setEmptyView(emptyView);
         forecastListView.setAdapter(mForecastAdapter);
         // We'll call our MainActivity
         forecastListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -158,7 +166,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                                     WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
                                             locationSetting,
                                             cursor.getLong(COL_WEATHER_DATE)
-                            ));
+                                    ));
                 }
                 mPosition = position;
             }
@@ -253,6 +261,24 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mForecastAdapter.swapCursor(data);
+        if ((data == null || data.getCount() == EMPTY_CURSOR) && emptyView != null) {
+            ConnectivityManager connectivityManager =
+                    (ConnectivityManager) getActivity().getSystemService(
+                            Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            boolean isConnected = activeNetworkInfo != null
+                    && activeNetworkInfo.isConnectedOrConnecting();
+            if (!isConnected) {
+                emptyView.setText(
+                        getActivity().getString(
+                                R.string.empty_forecast_list_not_connected));
+            }
+            else {
+                emptyView.setText(
+                        getActivity().getString(
+                                R.string.empty_forecast_list));
+            }
+        }
         if (mPosition != ListView.INVALID_POSITION) {
             // If we don't need to restart the loader, and there's a desired position to restore
             // to, do so now.
