@@ -15,11 +15,8 @@
  */
 package com.example.android.sunshine.app;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -262,22 +259,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mForecastAdapter.swapCursor(data);
         if ((data == null || data.getCount() == EMPTY_CURSOR) && emptyView != null) {
-            ConnectivityManager connectivityManager =
-                    (ConnectivityManager) getActivity().getSystemService(
-                            Context.CONNECTIVITY_SERVICE);
-            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-            boolean isConnected = activeNetworkInfo != null
-                    && activeNetworkInfo.isConnectedOrConnecting();
-            if (!isConnected) {
-                emptyView.setText(
-                        getActivity().getString(
-                                R.string.empty_forecast_list_not_connected));
-            }
-            else {
-                emptyView.setText(
-                        getActivity().getString(
-                                R.string.empty_forecast_list));
-            }
+            String message = (!Utility.isNetworkAvailable(getActivity())) ?
+                    getString(R.string.empty_forecast_list_not_connected) :
+                    getString(R.string.empty_forecast_list);
+            emptyView.setText(message);
         }
         if (mPosition != ListView.INVALID_POSITION) {
             // If we don't need to restart the loader, and there's a desired position to restore
