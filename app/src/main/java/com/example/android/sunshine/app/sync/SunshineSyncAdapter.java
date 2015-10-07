@@ -153,20 +153,25 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
 
             if (buffer.length() == 0)
             {
-                // Stream was empty.  No point in parsing.
+                // Stream was empty. No point in parsing.
                 return;
             }
             forecastJsonStr = buffer.toString();
             getWeatherDataFromJson(forecastJsonStr, locationQuery);
+            setLocationStatus(LOCATION_STATUS_OK);
         }
         catch (IOException e)
         {
+            // Received no data.
+            setLocationStatus(LOCATION_STATUS_SERVER_DOWN);
             Log.e(LOG_TAG, "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attempting
             // to parse it.
         }
         catch (JSONException e)
         {
+            // Received invalid data.
+            setLocationStatus(LOCATION_STATUS_SERVER_INVALID);
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         }
@@ -184,6 +189,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                 }
                 catch (final IOException e)
                 {
+                    setLocationStatus(LOCATION_STATUS_UNKNOWN);
                     Log.e(LOG_TAG, "Error closing stream", e);
                 }
             }
@@ -488,6 +494,15 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
         locationCursor.close();
         // Wait, that worked?  Yes!
         return locationId;
+    }
+
+    public void setLocationStatus(@LocationStatus int locationStatus)
+    {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(getContext().getString(R.string.pref_sync_result_key), locationStatus);
+        editor.apply();
     }
 
     /**
