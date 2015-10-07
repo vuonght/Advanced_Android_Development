@@ -258,16 +258,21 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mForecastAdapter.swapCursor(data);
+        updateEmptyViewMessage(data);
+        if (mPosition != ListView.INVALID_POSITION) {
+            // If we don't need to restart the loader, and there's a desired position to restore
+            // to, do so now.
+            forecastListView.smoothScrollToPosition(mPosition);
+        }
+    }
+
+    private void updateEmptyViewMessage(Cursor data)
+    {
         if ((data == null || data.getCount() == EMPTY_CURSOR) && emptyView != null) {
             String message = (!Utility.isNetworkAvailable(getActivity())) ?
                     getString(R.string.empty_forecast_list_not_connected) :
                     getString(R.string.empty_forecast_list);
             emptyView.setText(message);
-        }
-        if (mPosition != ListView.INVALID_POSITION) {
-            // If we don't need to restart the loader, and there's a desired position to restore
-            // to, do so now.
-            forecastListView.smoothScrollToPosition(mPosition);
         }
     }
 
