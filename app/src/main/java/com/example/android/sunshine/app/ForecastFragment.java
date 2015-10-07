@@ -39,7 +39,8 @@ import com.example.android.sunshine.app.data.WeatherContract;
 /**
  * Encapsulates fetching the forecast and displaying it as a {@link ListView} layout.
  */
-public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>
+{
     public static final String LOG_TAG = ForecastFragment.class.getSimpleName();
     private ForecastAdapter mForecastAdapter;
 
@@ -90,30 +91,35 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
      * implement. This mechanism allows activities to be notified of item
      * selections.
      */
-    public interface Callback {
+    public interface Callback
+    {
         /**
          * DetailFragmentCallback for when an item has been selected.
          */
         public void onItemSelected(Uri dateUri);
     }
 
-    public ForecastFragment() {
+    public ForecastFragment()
+    {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
         inflater.inflate(R.menu.forecastfragment, menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -122,7 +128,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 //            updateWeather();
 //            return true;
 //        }
-        if (id == R.id.action_map) {
+        if (id == R.id.action_map)
+        {
             openPreferredLocationInMap();
             return true;
         }
@@ -132,7 +139,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             Bundle savedInstanceState)
+    {
 
         // The ForecastAdapter will take data from a source and
         // use it to populate the ListView it's attached to.
@@ -174,7 +182,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         // does crazy lifecycle related things.  It should feel like some stuff stretched out,
         // or magically appeared to take advantage of room, but data or place in the app was never
         // actually *lost*.
-        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY))
+        {
             // The listview probably hasn't even been populated yet.  Actually perform the
             // swapout in onLoadFinished.
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
@@ -186,23 +195,28 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState)
+    {
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
     // since we read the location when we create the loader, all we need to do is restart things
-    void onLocationChanged( ) {
+    void onLocationChanged()
+    {
         getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
     }
 
-    private void openPreferredLocationInMap() {
+    private void openPreferredLocationInMap()
+    {
         // Using the URI scheme for showing a location found on a map.  This super-handy
         // intent can is detailed in the "Common Intents" page of Android's developer site:
         // http://developer.android.com/guide/components/intents-common.html#Maps
-        if ( null != mForecastAdapter ) {
+        if (null != mForecastAdapter)
+        {
             Cursor c = mForecastAdapter.getCursor();
-            if ( null != c ) {
+            if (null != c)
+            {
                 c.moveToPosition(0);
                 String posLat = c.getString(COL_COORD_LAT);
                 String posLong = c.getString(COL_COORD_LONG);
@@ -211,9 +225,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(geoLocation);
 
-                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null)
+                {
                     startActivity(intent);
-                } else {
+                }
+                else
+                {
                     Log.d(LOG_TAG, "Couldn't call " + geoLocation.toString() + ", no receiving apps installed!");
                 }
             }
@@ -222,18 +239,21 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(Bundle outState)
+    {
         // When tablets rotate, the currently selected list item needs to be saved.
         // When no item is selected, mPosition will be set to Listview.INVALID_POSITION,
         // so check for that before storing.
-        if (mPosition != ListView.INVALID_POSITION) {
+        if (mPosition != ListView.INVALID_POSITION)
+        {
             outState.putInt(SELECTED_KEY, mPosition);
         }
         super.onSaveInstanceState(outState);
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle)
+    {
         // This is called when a new Loader needs to be created.  This
         // fragment only uses one loader, so we don't care about checking the id.
 
@@ -256,10 +276,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data)
+    {
         mForecastAdapter.swapCursor(data);
         updateEmptyViewMessage(data);
-        if (mPosition != ListView.INVALID_POSITION) {
+        if (mPosition != ListView.INVALID_POSITION)
+        {
             // If we don't need to restart the loader, and there's a desired position to restore
             // to, do so now.
             forecastListView.smoothScrollToPosition(mPosition);
@@ -268,7 +290,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     private void updateEmptyViewMessage(Cursor data)
     {
-        if ((data == null || data.getCount() == EMPTY_CURSOR) && emptyView != null) {
+        if ((data == null || data.getCount() == EMPTY_CURSOR) && emptyView != null)
+        {
             String message = (!Utility.isNetworkAvailable(getActivity())) ?
                     getString(R.string.empty_forecast_list_not_connected) :
                     getString(R.string.empty_forecast_list);
@@ -277,13 +300,16 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(Loader<Cursor> loader)
+    {
         mForecastAdapter.swapCursor(null);
     }
 
-    public void setUseTodayLayout(boolean useTodayLayout) {
+    public void setUseTodayLayout(boolean useTodayLayout)
+    {
         mUseTodayLayout = useTodayLayout;
-        if (mForecastAdapter != null) {
+        if (mForecastAdapter != null)
+        {
             mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
         }
     }
