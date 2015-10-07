@@ -154,11 +154,11 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
             if (buffer.length() == 0)
             {
                 // Stream was empty. No point in parsing.
+                setLocationStatus(LOCATION_STATUS_SERVER_DOWN);
                 return;
             }
             forecastJsonStr = buffer.toString();
             getWeatherDataFromJson(forecastJsonStr, locationQuery);
-            setLocationStatus(LOCATION_STATUS_OK);
         }
         catch (IOException e)
         {
@@ -347,7 +347,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
             }
 
             Log.d(LOG_TAG, "Sync Complete. " + cVVector.size() + " Inserted");
-
+            setLocationStatus(LOCATION_STATUS_OK);
         }
         catch (JSONException e)
         {
