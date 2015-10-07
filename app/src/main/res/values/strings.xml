@@ -116,5 +116,7 @@
     <!-- String for empty list view -->
     <string name="empty_forecast_list">No Weather\nInformation Available</string>
     <string name="empty_forecast_list_not_connected">Oh noes! Are you connected to the Internet?</string>
+    <string name="empty_forecast_list_server_error">The server returned an error.</string>
+    <string name="empty_forecast_list_server_down">The server is not returning data.</string>
 
 </resources>
