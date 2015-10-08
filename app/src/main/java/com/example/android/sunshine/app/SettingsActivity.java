@@ -126,6 +126,7 @@ public class SettingsActivity extends PreferenceActivity
     {
         if (key.equals(getString(R.string.pref_location_key)))
         {
+            Utility.resetLocationStatus(this);
             SunshineSyncAdapter.syncImmediately(this);
         }
         else if (key.equals(getString(R.string.pref_units_key)))

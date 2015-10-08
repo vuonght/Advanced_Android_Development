@@ -73,7 +73,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({LOCATION_STATUS_OK, LOCATION_STATUS_SERVER_DOWN,
-            LOCATION_STATUS_SERVER_INVALID, LOCATION_STATUS_UNKNOWN})
+            LOCATION_STATUS_SERVER_INVALID, LOCATION_STATUS_UNKNOWN,
+            LOCATION_STATUS_INVALID})
     public @interface LocationStatus
     {
     }
@@ -82,6 +83,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
     public static final int LOCATION_STATUS_SERVER_DOWN = 1;
     public static final int LOCATION_STATUS_SERVER_INVALID = 2;
     public static final int LOCATION_STATUS_UNKNOWN = 3;
+    public static final int LOCATION_STATUS_INVALID = 4;
 
     public SunshineSyncAdapter(Context context, boolean autoInitialize)
     {
@@ -215,6 +217,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
 
         // These are the names of the JSON objects that need to be extracted.
 
+        // Error information
+        final String OWM_HTTP_CODE = "cod";
+
         // Location information
         final String OWM_CITY = "city";
         final String OWM_CITY_NAME = "name";
@@ -244,6 +249,21 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
         try
         {
             JSONObject forecastJson = new JSONObject(forecastJsonStr);
+
+            if (forecastJson.has(OWM_HTTP_CODE))
+            {
+                if (forecastJson.getInt(OWM_HTTP_CODE) == HttpURLConnection.HTTP_NOT_FOUND)
+                {
+                    setLocationStatus(LOCATION_STATUS_INVALID);
+                    return;
+                }
+                else if (forecastJson.getInt(OWM_HTTP_CODE) != HttpURLConnection.HTTP_OK)
+                {
+                    setLocationStatus(LOCATION_STATUS_SERVER_DOWN);
+                    return;
+                }
+            }
+
             JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
 
             JSONObject cityJson = forecastJson.getJSONObject(OWM_CITY);

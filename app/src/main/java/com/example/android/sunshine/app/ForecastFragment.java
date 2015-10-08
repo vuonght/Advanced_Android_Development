@@ -330,6 +330,8 @@ public class ForecastFragment extends Fragment
                         getString(R.string.empty_forecast_list_server_error));
                 put(SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN,
                         getString(R.string.empty_forecast_list));
+                put(SunshineSyncAdapter.LOCATION_STATUS_INVALID,
+                        getString(R.string.empty_forecast_list_server_invalid));
             }};
             if (locationStatusToMessage.containsKey(Utility.getLocationStatus(getActivity())))
             {

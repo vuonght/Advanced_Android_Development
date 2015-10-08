@@ -118,5 +118,6 @@
     <string name="empty_forecast_list_not_connected">Oh noes! Are you connected to the Internet?</string>
     <string name="empty_forecast_list_server_error">The server returned an error.</string>
     <string name="empty_forecast_list_server_down">The server is not returning data.</string>
+    <string name="empty_forecast_list_server_invalid">The location could not be found.</string>
 
 </resources>

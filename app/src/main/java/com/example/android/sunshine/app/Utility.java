@@ -188,6 +188,17 @@ public class Utility
         return monthDayString;
     }
 
+    public static void resetLocationStatus(Context context)
+    {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(
+                context.getString(R.string.pref_sync_result_key),
+                SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
+        editor.apply();
+    }
+
     public static String getFormattedWind(Context context, float windSpeed, float degrees)
     {
         int windFormat;
