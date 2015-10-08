@@ -305,7 +305,7 @@ public class ForecastFragment extends Fragment
     public void onLoadFinished(Loader<Cursor> loader, Cursor data)
     {
         mForecastAdapter.swapCursor(data);
-        updateEmptyViewMessage(data);
+        updateEmptyViewMessage();
         if (mPosition != ListView.INVALID_POSITION)
         {
             // If we don't need to restart the loader, and there's a desired position to restore
@@ -317,11 +317,10 @@ public class ForecastFragment extends Fragment
     /**
      * Updates the empty list view with contextually relevant information
      * that the user can use to determine why they are not seeing weather.
-     * @param data
      */
-    private void updateEmptyViewMessage(Cursor data)
+    private void updateEmptyViewMessage()
     {
-        if ((data == null || data.getCount() == EMPTY_CURSOR) && emptyView != null)
+        if (mForecastAdapter.getCount() == EMPTY_CURSOR && emptyView != null)
         {
             Map<Integer, String> locationStatusToMessage = new HashMap<Integer, String>() {{
                 put(SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN,
@@ -351,9 +350,9 @@ public class ForecastFragment extends Fragment
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
-        if (key.equals(getString(R.string.pref_sync_result_key)) && emptyView != null)
+        if (key.equals(getString(R.string.pref_sync_result_key)))
         {
-
+            updateEmptyViewMessage();
         }
     }
 

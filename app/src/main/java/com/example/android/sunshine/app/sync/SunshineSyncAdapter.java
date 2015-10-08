@@ -191,7 +191,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                 }
                 catch (final IOException e)
                 {
-                    setLocationStatus(LOCATION_STATUS_UNKNOWN);
+                    setLocationStatus(LOCATION_STATUS_SERVER_DOWN);
                     Log.e(LOG_TAG, "Error closing stream", e);
                 }
             }

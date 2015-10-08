@@ -24,7 +24,6 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
@@ -92,7 +91,6 @@ public class SettingsActivity extends PreferenceActivity
     private void setPreferenceSummary(Preference preference, Object value)
     {
         String stringValue = value.toString();
-        String key = preference.getKey();
 
         if (preference instanceof ListPreference)
         {
@@ -118,10 +116,9 @@ public class SettingsActivity extends PreferenceActivity
     {
         if (preference.getKey().equals(getString(R.string.pref_location_key)))
         {
-            Log.wtf("SettingsActivity", "LOCATION!");
             SharedPreferences sharedPreferences =
                     PreferenceManager.getDefaultSharedPreferences(this);
-            int locationStatus =
+            @SunshineSyncAdapter.LocationStatus int locationStatus =
                     sharedPreferences.getInt(
                             getString(R.string.pref_sync_result_key),
                             SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
