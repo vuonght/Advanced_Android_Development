@@ -24,6 +24,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
@@ -115,8 +116,38 @@ public class SettingsActivity extends PreferenceActivity
     @Override
     public boolean onPreferenceChange(Preference preference, Object value)
     {
-        setPreferenceSummary(preference, value);
-        return true;
+        if (preference.getKey().equals(getString(R.string.pref_location_key)))
+        {
+            Log.wtf("SettingsActivity", "LOCATION!");
+            SharedPreferences sharedPreferences =
+                    PreferenceManager.getDefaultSharedPreferences(this);
+            int locationStatus =
+                    sharedPreferences.getInt(
+                            getString(R.string.pref_sync_result_key),
+                            SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
+            if (locationStatus == SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN)
+            {
+                setPreferenceSummary(
+                        preference,
+                        getString(R.string.pref_location_unknown_description, value));
+            }
+            else if (locationStatus == SunshineSyncAdapter.LOCATION_STATUS_INVALID)
+            {
+                setPreferenceSummary(
+                        preference,
+                        getString(R.string.pref_location_error_description, value));
+            }
+            else
+            {
+                setPreferenceSummary(preference, value);
+            }
+            return true;
+        }
+        else
+        {
+            setPreferenceSummary(preference, value);
+            return true;
+        }
     }
 
     // This gets called after the preference is changed, which is important because we
