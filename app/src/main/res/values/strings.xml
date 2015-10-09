@@ -105,7 +105,7 @@
     <string name="format_pressure">Pressure: <xliff:g id="pressure">%1.0f</xliff:g> hPa</string>
 
     <!-- Humidity format CHAR LIMIT=25]-->
-    <string name="format_humidity">Humidity: <xliff:g id="humidity">%1.0f</xliff:g> %%</string>
+    <string name="format_humidity">Humidity: <xliff:g id="humidity">%1.0f</xliff:g>%%</string>
 
     <!-- SyncAdapter related -->
     <string name="sync_account_type">sunshine.example.com</string>
@@ -123,5 +123,11 @@
     <string name="empty_forecast_list_server_error">The server returned an error.</string>
     <string name="empty_forecast_list_server_down">The server is not returning data.</string>
     <string name="empty_forecast_list_server_invalid">The location could not be found.</string>
+
+    <!-- Accessibility -->
+    <string name="a11y_forecast">Forecast: <xliff:g id="condition">%1$s</xliff:g></string>
+    <string name="a11y_forecast_icon">Forecast Icon: <xliff:g id="condition">%1$s</xliff:g></string>
+    <string name="a11y_high_temp">High: <xliff:g id="high">%1$s</xliff:g></string>
+    <string name="a11y_low_temp">Low: <xliff:g id="low">%1$s</xliff:g></string>
 
 </resources>
